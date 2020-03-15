@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 // import { database } from '../firebase';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { getNotes, saveNotes } from '../actions/notesAction';
+import { getNotes, saveNotes, deleteNotes } from '../actions/notesAction';
+import NoteCard from './NoteCard';
+import { getUser } from '../actions/userAction';
 class App extends Component {
   constructor(props) {
     super(props)
@@ -30,15 +32,17 @@ class App extends Component {
     // });
 
     this.props.getNotes();
+    this.props.getUser();
   }
 
   renderNotes() {
     return _.map(this.props.notes, (note, key) => {
       return (
-        <div key="key">
+        <NoteCard key={key}>
           <h3>{note.title}</h3>
           <p>{note.body}</p>
-        </div>
+          <button className="btn btn-danger btn-xs" onClick={() => this.props.deleteNotes(key)}>Delete</button>
+        </NoteCard>
       )
     })
   }
@@ -97,8 +101,9 @@ class App extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    notes: state.notes
+    notes: state.notes,
+    user: state.user
   }
 }
 
-export default connect(mapStateToProps, { getNotes, saveNotes })(App);
+export default connect(mapStateToProps, { getNotes, saveNotes, deleteNotes, getUser })(App);
